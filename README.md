@@ -35,7 +35,7 @@ exit</pre>
 
 * Install apt dependencies
 ```
-apt -y install quilt libreadline-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
+sudo apt -y install quilt libreadline-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
   unixodbc-dev libpri-dev libvpb-dev libnewt-dev libsqlite3-dev libspeex-dev \
   libspeexdsp-dev libcurl4-openssl-dev libpopt-dev libiksemel-dev freetds-dev libvorbis-dev \
   libsnmp-dev libcap-dev libi2c-dev libjansson-dev build-essential libtonezone-dev \
