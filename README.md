@@ -1,6 +1,7 @@
 # Asterisk Source for AllStarLink
 
-This is the Asterisk source package for AllStarLink and the files to build the ASL 2.0.0+ distribution.
+This is the Asterisk source package for AllStarLink and the files to build the ASL 2.0.0+ distribution. This repo contains patches
+for building AllStarLink on recent editions of Debian. Currently tested on Debian 11 Bullseye.
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -16,23 +17,28 @@ AllStarLink Node Stats:  https://stats.allstarlink.org
 
 ## Prerequisites
 
-#### Debian 10 Buster
+#### Debian 11 Bullseye
 
 * Install the ASL Repo
 
 <pre>
+sudo su
+apt update
+apt install -y curl gnupg
 echo "deb http://apt.allstarlink.org/repos/asl_builds buster main" > /etc/apt/sources.list.d/allstar.list
-curl -s http://apt.allstarlink.org/repos/repo_signing.key | sudo apt-key add -
-apt update</pre>
+curl -s http://apt.allstarlink.org/repos/repo_signing.key | apt-key add -
+apt update
+exit</pre>
 </pre>
 
 * Install apt dependencies
 ```
-apt -y install quilt libreadline-gplv2-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
-  unixodbc-dev libpri-dev libvpb-dev asl-dahdi-source libnewt-dev libsqlite-dev libspeex-dev \
+apt -y install quilt libreadline-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
+  unixodbc-dev libpri-dev libvpb-dev asl-dahdi-source libnewt-dev libsqlite3-dev libspeex-dev \
   libspeexdsp-dev libcurl4-openssl-dev libpopt-dev libiksemel-dev freetds-dev libvorbis-dev \
   libsnmp-dev libcap-dev libi2c-dev libjansson-dev build-essential libtonezone-dev \
-  git cmake g++ libboost-all-dev libgmp-dev swig python3-numpy asl-dahdi-source libusb-dev
+  git cmake g++ libboost-all-dev libgmp-dev swig python3-numpy asl-dahdi-source libusb-dev \
+  libmxml-dev graphviz doxygen gsfonts devscripts
 ```
 
 ## Compiling
@@ -41,23 +47,63 @@ Packaging (.deb)
 This will compile and package AllStar into .deb files. You do not need to run configure or make before doing this.
 
 ```
-git clone https://github.com/AllStarLink/ASL-Asterisk.git
+git clone https://github.com/F4HWD/ASL-Asterisk.git
 cd ASL-Asterisk/asterisk
 debuild -b -us -uc
 ```
 
 .debs will appear in the repository root folder after compiling and packaging
 
-Manually
+If all goes well, you will have cloned, configured, compiled and installed the Astersisk 1.4.23pre and app_rpt suite of programs that comprise the ASL 2.0.0+ release onto your system.
+
+## Install
+You can now install all generated .deb files. Assuming you're still in asterisk folder
+
 ```
-git clone https://github.com/AllStarLink/ASL-Asterisk.git
-cd ASL-Asterisk/asterisk
-./configure
-make
-make install
+cd ..
+sudo dpkg -i asl-asterisk*.deb
 ```
 
-If all goes well, you will have cloned, configured, compiled and installed the Astersisk 1.4.23pre and app_rpt suite of programs that comprise the ASL 2.0.0+ release onto your system.
+To install various scripts useful for AllStarLink, like the famous asl-menu. Assuming you're in the root of the repository
+
+```
+cd allstar
+sudo make install
+```
+
+
+## Dependencies
+You will need DAHDI modules for your kernel. For the moment, there is no known method to succeed the compilation. You can use a pre-compiled package instead
+For the linux-headers, I will use classic Debian. If you have a Raspberry Pi or if the command fails, please refer to the documentation of your distribution.
+
+``` 
+sudo apt install linux-headers-$(dpkg --print-architecture)
+cd ~/
+wget http://dvswitch.org/buster
+chmod +x buster
+sudo ./buster
+rm buster
+sudo apt remove -y asl-dahdi-linux asl-dahdi-source
+sudo apt install -y allstar-dahdi-linux-dkms
+```
+
+Normally, the nodes list updates on its own. If not (impossible to connect to a node after a while), you can either compile the following repository ... : https://github.com/AllStarLink/ASL-Nodes-Diff
+
+... or type the following commands to install it directly
+
+```
+wget https://github.com/AllStarLink/ASL-Nodes-Diff/releases/download/2.0.0-beta.5/asl-update-node-list_2.0.0-beta.5-1_all.deb
+sudo dpkg -i asl-update-node-list_2.0.0-beta.5-1_all.deb
+```
+
+## Configuration
+You can now configure your node
+
+```
+sudo asl-menu
+```
+
+
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
