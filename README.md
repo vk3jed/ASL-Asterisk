@@ -3,6 +3,8 @@
 This is the Asterisk source package for AllStarLink and the files to build the ASL 2.0.0+ distribution. This repo contains patches
 for building AllStarLink on recent editions of Debian. Currently tested on Debian 11 Bullseye.
 
+WARNING ! : This is actually impossible to compile AllStarLink for Debian 12 Bookworm, because the kernel is too recent and there is a missing dependency (libvpb-dev). Feel free to make a pull request if you have a solution. Thank you :)
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 AllStarLink Wiki: https://wiki.allstarlink.org
@@ -19,25 +21,14 @@ AllStarLink Node Stats:  https://stats.allstarlink.org
 
 #### Debian 11 Bullseye
 
-* Install the ASL Repo
-
-<pre>
-sudo su
-apt update
-apt install -y curl gnupg
-echo "deb http://apt.allstarlink.org/repos/asl_builds buster main" > /etc/apt/sources.list.d/allstar.list
-curl -s http://apt.allstarlink.org/repos/repo_signing.key | apt-key add -
-apt update
-exit</pre>
-</pre>
 
 * Install apt dependencies
 ```
-apt -y install quilt libreadline-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
-  unixodbc-dev libpri-dev libvpb-dev asl-dahdi-source libnewt-dev libsqlite3-dev libspeex-dev \
+sudo apt -y install quilt libreadline-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
+  unixodbc-dev libpri-dev libvpb-dev libnewt-dev libsqlite3-dev libspeex-dev \
   libspeexdsp-dev libcurl4-openssl-dev libpopt-dev libiksemel-dev freetds-dev libvorbis-dev \
   libsnmp-dev libcap-dev libi2c-dev libjansson-dev build-essential libtonezone-dev \
-  git cmake g++ libboost-all-dev libgmp-dev swig python3-numpy asl-dahdi-source libusb-dev \
+  git cmake g++ libboost-all-dev libgmp-dev swig python3-numpy libusb-dev \
   libmxml-dev graphviz doxygen gsfonts devscripts
 ```
 
@@ -83,7 +74,6 @@ wget http://dvswitch.org/buster
 chmod +x buster
 sudo ./buster
 rm buster
-sudo apt remove -y asl-dahdi-linux asl-dahdi-source
 sudo apt install -y allstar-dahdi-linux-dkms
 ```
 
