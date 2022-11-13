@@ -21,26 +21,30 @@ AllStarLink Node Stats:  https://stats.allstarlink.org
 
 #### Debian 11 Bullseye
 
-* Install the ASL Repo
-
-<pre>
-sudo su
-apt update
-apt install -y curl gnupg
-echo "deb http://apt.allstarlink.org/repos/asl_builds buster main" > /etc/apt/sources.list.d/allstar.list
-curl -s http://apt.allstarlink.org/repos/repo_signing.key | apt-key add -
-apt update
-exit</pre>
-</pre>
-
 * Install apt dependencies
+
 ```
+sudo apt update
 sudo apt -y install quilt libreadline-dev libgsm1-dev libssl-dev libasound2-dev libpq-dev \
   unixodbc-dev libpri-dev libvpb-dev libnewt-dev libsqlite3-dev libspeex-dev \
   libspeexdsp-dev libcurl4-openssl-dev libpopt-dev libiksemel-dev freetds-dev libvorbis-dev \
   libsnmp-dev libcap-dev libi2c-dev libjansson-dev build-essential libtonezone-dev \
-  git cmake g++ libboost-all-dev libgmp-dev swig python3-numpy asl-dahdi-source libusb-dev \
+  git cmake g++ libboost-all-dev libgmp-dev swig python3-numpy libusb-dev \
   libmxml-dev graphviz doxygen gsfonts devscripts
+```
+
+* Install DAHDI modules
+First, you will need DAHDI modules for your kernel. For the moment, there is no known method to succeed the compilation. You can use a pre-compiled package instead
+For the linux-headers, I will use classic Debian. If you have a Raspberry Pi or if the command fails, please refer to the documentation of your distribution.
+
+``` 
+sudo apt install linux-headers-$(dpkg --print-architecture)
+cd ~/
+wget http://dvswitch.org/buster
+chmod +x buster
+sudo ./buster
+rm buster
+sudo apt install -y allstar-dahdi-linux-dkms
 ```
 
 ## Compiling
@@ -73,29 +77,16 @@ cd allstar
 sudo make install
 ```
 
-If you want a .deb package for these scripts, you can type the following command
+If you want a .deb package for these scripts, you can type the following command. Note that command will also install these scripts directly, no need to unpack them on your current system
 
 ```
-debuild -b -us -uc
+sudo debuild -b -us -uc
 ```
 
 It will create an allstar-helpers***.deb in the root directory of the repository
 
 
 ## Dependencies
-You will need DAHDI modules for your kernel. For the moment, there is no known method to succeed the compilation. You can use a pre-compiled package instead
-For the linux-headers, I will use classic Debian. If you have a Raspberry Pi or if the command fails, please refer to the documentation of your distribution.
-
-``` 
-sudo apt install linux-headers-$(dpkg --print-architecture)
-cd ~/
-wget http://dvswitch.org/buster
-chmod +x buster
-sudo ./buster
-rm buster
-sudo apt remove -y asl-dahdi-linux asl-dahdi-source
-sudo apt install -y allstar-dahdi-linux-dkms
-```
 
 Normally, the nodes list updates on its own. If not (impossible to connect to a node after a while), you can either compile the following repository ... : https://github.com/AllStarLink/ASL-Nodes-Diff
 
@@ -113,7 +104,7 @@ You can now configure your node
 sudo asl-menu
 ```
 
-
+WARNING : there is some bugs with asl-menu, especially for the password of your node. I will correct this later.
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
